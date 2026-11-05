@@ -13,6 +13,10 @@ Strona działa w całości w przeglądarce. Odpowiedzi nie są zapisywane (brak 
 
 ## Zastrzeżenia
 
-To narzędzia przesiewowe, nie diagnoza. Pytania to robocze polskie tłumaczenia, nie oficjalne adaptacje (polska adaptacja MHC-SF: Karaś, Cieciuch, Keyes, 2014, *Personality and Individual Differences*, 69, 104–109).
+To narzędzia przesiewowe, nie diagnoza.
+
+MHC-SF jest użyty w oficjalnej polskiej adaptacji: Corey L. M. Keyes; polska adaptacja Dominika Karaś, Jan Cieciuch, Corey L. M. Keyes (2014), *Personality and Individual Differences*, 69, 104–109. Udostępniona na licencji Creative Commons Uznanie autorstwa (CC BY), www.liberilibri.pl. Treść polecenia, pytań i skali odpowiedzi jest zgodna z adaptacją; jedyna zmiana to „Wstaw znak »x« w okienku” zamienione na „Wybierz odpowiedź”.
+
+PHQ-9 i GAD-7 to robocze polskie tłumaczenia, nie oficjalne adaptacje.
 
 Pomoc w kryzysie: 800 70 2222 (całą dobę), 116 123, 112.
