@@ -313,7 +313,24 @@ details[open] { padding-bottom: 14px; }
 details summary { cursor: pointer; font-weight: 700; padding: 12px 0; min-height: 44px; }
 details ul { margin: 12px 0 2px; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
 details > p { margin-top: 10px; }
-.about { display: flex; flex-direction: column; gap: 10px; }
+.more {
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.more h2 { font-size: 19px; }
+.qlist { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.qlist li { display: flex; flex-direction: column; gap: 2px; padding-left: 12px; border-left: 3px solid var(--line); }
+.qlist li.main { border-left-color: var(--accent); }
+.qlist .qname { font-weight: 700; }
+.qlist .qrole { font-size: 15px; }
+.qlist .qorig { font-size: 14px; color: var(--muted); }
+.link[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.chev { display: inline-block; transition: transform .15s ease; }
 
 .summary-text {
   min-height: 220px;
@@ -524,78 +541,46 @@ const BAND_INTERP = {
 /* ---------- views ---------- */
 function startView() {
   const cards = ["phq", "gad"].map(id => instrCard(id)).join("");
+  const open = !!state.moreOpen;
   return `
   <section>
     <p class="eyebrow">Samoocena przed wizytą</p>
     <h1 tabindex="-1">Jak się masz w ostatnim czasie?</h1>
-    <p class="lede">Krótki kwestionariusz, który pomaga spojrzeć na swój stan z boku. Odpowiadasz tylko dla siebie.</p>
-    <ol class="steps">
-      <li><div><b>Odpowiadasz na 14 pytań.</b> O ostatni miesiąc, około 3 minut.</div></li>
-      <li><div><b>Widzisz wynik i jego interpretację.</b> Co oznacza i co możesz z nim zrobić.</div></li>
-      <li><div><b>Możesz go skopiować.</b> I pokazać na wizycie.</div></li>
-    </ol>
-    <div class="btn-row"><button class="btn primary" data-act="start" data-id="mhc">Zaczynam</button>${state.done.mhc ? `<button class="link" data-act="result" data-id="mhc">Zobacz swój wynik</button>` : ""}</div>
-  </section>
-  <hr class="divider">
-  <section>
-    <h2>Albo zacznij od czegoś innego</h2>
-    <p class="muted">Dwa krótkie kwestionariusze o objawach. Możesz je wypełnić teraz albo później, po pierwszym.</p>
-    <div class="cards">${cards}</div>
-  </section>
-  <hr class="divider">
-  ${aboutView()}`;
-}
-
-function aboutView() {
-  return `
-  <section>
-    <h2>Co to za kwestionariusze</h2>
-    <p class="muted">Trzy krótkie, szeroko stosowane narzędzia przesiewowe. Każde mierzy coś innego, razem dają pełniejszy obraz.</p>
-    <div class="about">
-      <details>
-        <summary>Dlaczego dobrostan i objawy osobno</summary>
-        <p>Psycholog Corey Keyes pokazał, że zdrowie psychiczne to nie tylko brak choroby. Można nie mieć wyraźnych objawów depresji ani lęku, a mimo to żyć bez radości, zainteresowania i poczucia sensu. Można też mieć objawy i jednocześnie dobrze funkcjonować w wielu obszarach.</p>
-        <p>Dlatego te narzędzia patrzą z dwóch stron: MHC-SF mierzy, ile jest dobrego samopoczucia, a PHQ-9 i GAD-7, ile jest objawów, które mogą je obniżać.</p>
-      </details>
-      <details>
-        <summary>MHC-SF: dobrostan</summary>
-        <p>Mental Health Continuum – Short Form (C. Keyes). 14 pytań o to, jak często w ostatnim miesiącu było Ci dobrze i jak funkcjonowałeś(-aś). Ma polską adaptację naukową (Karaś, Cieciuch, Keyes, 2014).</p>
-        <ul>
-          <li><b>Obszar emocjonalny</b> (3 pytania): szczęście, zainteresowanie życiem, zadowolenie z niego.</li>
-          <li><b>Obszar społeczny</b> (5 pytań): poczucie przynależności, wkładu i sensu w życiu wspólnoty.</li>
-          <li><b>Obszar psychologiczny</b> (6 pytań): akceptacja siebie, radzenie sobie z codziennością, rozwój, bliskie relacje, niezależność, kierunek w życiu.</li>
-        </ul>
-        <p>Wynik to jedna z trzech kategorii. <b>Rozkwit</b>: co najmniej jedno z trzech odczuć emocjonalnych i sześć z pozostałych jedenastu pojawiało się prawie codziennie lub codziennie. <b>Marnienie</b>: analogicznie, ale nigdy albo raz, dwa razy w miesiącu. <b>Stan pośredni</b>: wszystko pomiędzy.</p>
-      </details>
-      <details>
-        <summary>PHQ-9: nastrój</summary>
-        <p>Patient Health Questionnaire-9 (Kroenke, Spitzer, Williams, 2001). 9 pytań odpowiadających kryteriom epizodu depresji, o ostatnie 2 tygodnie. Za każde pytanie 0–3 punkty, razem 0–27.</p>
-        <p>Przedziały: 0–4 minimalne, 5–9 łagodne, 10–14 umiarkowane, 15–19 umiarkowanie ciężkie, 20–27 ciężkie nasilenie objawów. Wynik od 10 w górę to próg, przy którym zwykle zaleca się konsultację. Ostatnie pytanie dotyczy myśli o śmierci lub zrobieniu sobie krzywdy: każda odpowiedź inna niż „wcale” to powód, żeby szybko z kimś porozmawiać.</p>
-      </details>
-      <details>
-        <summary>GAD-7: lęk</summary>
-        <p>Generalized Anxiety Disorder-7 (Spitzer, Kroenke, Williams, Löwe, 2006). 7 pytań o zamartwianie się, napięcie i niepokój w ostatnich 2 tygodniach. Za każde pytanie 0–3 punkty, razem 0–21.</p>
-        <p>Przedziały: 0–4 minimalne, 5–9 łagodne, 10–14 umiarkowane, 15–21 ciężkie nasilenie objawów. Choć powstał z myślą o lęku uogólnionym, dobrze wychwytuje też inne trudności lękowe, np. napady paniki czy lęk społeczny. Wynik od 10 w górę to próg, przy którym zwykle zaleca się konsultację.</p>
-      </details>
-      <details>
-        <summary>Jak mogą pomóc w ocenie własnego stanu</summary>
-        <ul>
-          <li><b>Dają punkt odniesienia.</b> Zamiast „chyba jest gorzej” masz konkretny wynik, który możesz porównać z progami i z własnym wynikiem za kilka tygodni.</li>
-          <li><b>Pomagają nazwać, co się dzieje.</b> Widać, czy chodzi bardziej o brak dobrego samopoczucia, o nastrój, o lęk, czy o kilka rzeczy naraz.</li>
-          <li><b>Ułatwiają decyzję o konsultacji.</b> Progi są oparte na badaniach, więc nie musisz zgadywać, czy „to już coś”.</li>
-          <li><b>Ułatwiają rozmowę na wizycie.</b> Specjaliści znają te narzędzia. Pokazanie wyniku to dobry początek rozmowy.</li>
-        </ul>
-      </details>
-      <details>
-        <summary>Czego te kwestionariusze nie robią</summary>
-        <ul>
-          <li>Nie stawiają diagnozy. Diagnozę może postawić tylko specjalista po rozmowie.</li>
-          <li>Opisują krótki okres: ostatni miesiąc albo 2 tygodnie. Wynik może się zmieniać.</li>
-          <li>Zależą od tego, jak odpowiadasz. Zmęczenie, chwilowy nastrój albo chęć wypadnięcia lepiej wpływają na wynik.</li>
-          <li>Pytania na tej stronie to robocze polskie tłumaczenia, nie oficjalne adaptacje, więc wyniki są orientacyjne.</li>
-        </ul>
-      </details>
+    <p class="lede">14 pytań o to, jak się czujesz i funkcjonujesz w ostatnim miesiącu. Około 3 minut. Na końcu dostajesz wynik z interpretacją, który możesz skopiować i pokazać na wizycie.</p>
+    <div class="btn-row">
+      <button class="btn primary" data-act="start" data-id="mhc">Zaczynam</button>
+      <button class="link" data-act="more" aria-expanded="${open}" aria-controls="more">Dowiedz się więcej <span class="chev" aria-hidden="true">▾</span></button>
+      ${state.done.mhc ? `<button class="link" data-act="result" data-id="mhc">Zobacz swój wynik</button>` : ""}
     </div>
+    <div class="more" id="more" ${open ? "" : "hidden"}>
+      <p>Zdrowie psychiczne to nie tylko brak objawów. Można nie mieć depresji ani lęku, a mimo to żyć bez radości i poczucia sensu. Dlatego aplikacja patrzy z dwóch stron: ile jest dobrego samopoczucia i ile jest objawów, które mogą je obniżać.</p>
+      <ul class="qlist">
+        <li class="main">
+          <span class="qname">MHC-SF · Dobrostan · 14 pytań</span>
+          <span class="qrole">Tutaj: punkt wyjścia. Pokazuje, czy jesteś w stanie rozkwitu, marnienia czy pośrednim, i który obszar życia wypada najsłabiej.</span>
+          <span class="qorig">Mental Health Continuum – Short Form. Stworzony przez Coreya Keyesa do badania zdrowia psychicznego jako czegoś więcej niż brak choroby.</span>
+        </li>
+        <li>
+          <span class="qname">PHQ-9 · Nastrój · 9 pytań</span>
+          <span class="qrole">Tutaj: opcjonalny. Sprawdza, czy obniżony nastrój może odbierać Ci dobre samopoczucie.</span>
+          <span class="qorig">Patient Health Questionnaire-9. Powstał dla lekarzy rodzinnych, żeby szybko wychwytywać depresję i oceniać jej nasilenie.</span>
+        </li>
+        <li>
+          <span class="qname">GAD-7 · Lęk i napięcie · 7 pytań</span>
+          <span class="qrole">Tutaj: opcjonalny. Sprawdza, czy zamartwianie się i napięcie mogą odbierać Ci dobre samopoczucie.</span>
+          <span class="qorig">Generalized Anxiety Disorder-7. Powstał dla lekarzy rodzinnych do wychwytywania zaburzeń lękowych.</span>
+        </li>
+      </ul>
+      <p><b>Najlepiej zacznij od dobrostanu.</b> Pozostałe dwa znajdziesz niżej. Możesz je wypełnić po nim albo osobno.</p>
+      <p class="small muted">To narzędzia przesiewowe, nie diagnoza. Pomagają nazwać, co się dzieje, i zdecydować, czy warto pójść do specjalisty.</p>
+      <div class="btn-row"><button class="btn primary" data-act="start" data-id="mhc">Zaczynam od dobrostanu</button></div>
+    </div>
+  </section>
+  <hr class="divider">
+  <section>
+    <h2>Pozostałe kwestionariusze</h2>
+    <p class="muted">Opcjonalne, o objawach. Najwięcej powiedzą po dobrostanie, ale możesz też zacząć od nich.</p>
+    <div class="cards">${cards}</div>
   </section>`;
 }
 
@@ -847,6 +832,12 @@ document.addEventListener("click", e => {
   const act = el.dataset.act, id = el.dataset.id;
   switch (act) {
     case "home": go("start"); break;
+    case "more": {
+      state.moreOpen = !state.moreOpen;
+      el.setAttribute("aria-expanded", String(state.moreOpen));
+      document.getElementById("more").hidden = !state.moreOpen;
+      break;
+    }
     case "start": startInstr(id); break;
     case "result": go("result", { current: id }); break;
     case "answer": answer(+el.dataset.val); break;

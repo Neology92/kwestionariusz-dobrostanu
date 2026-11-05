@@ -4,7 +4,7 @@ Prosta, statyczna strona do samooceny dobrostanu przed wizytą u specjalisty.
 
 - **MHC-SF** (Mental Health Continuum – Short Form, C. Keyes): 14 pytań, wynik w trzech kategoriach (marnienie, stan pośredni, rozkwit) i trzech obszarach.
 - Opcjonalnie **PHQ-9** (nastrój) i **GAD-7** (lęk), proponowane po pierwszym kwestionariuszu albo dostępne od razu.
-- Na stronie startowej opis kwestionariuszy: czym są, jak działa punktacja, do czego służą i czego nie robią.
+- Na stronie startowej, obok przycisku startu, rozwijany skrócony opis: po co powstały te kwestionariusze i jaką rolę pełnią w aplikacji.
 - Po każdym kwestionariuszu wyświetla się interpretacja wyniku: co oznacza kategoria lub nasilenie, który obszar wypadł najniżej i co można z tym zrobić.
 
 ## Prywatność
