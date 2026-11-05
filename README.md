@@ -1,4 +1,4 @@
-# Kontinuum dobrostanu
+# Kwestionariusz dobrostanu
 
 Prosta, statyczna strona do samooceny dobrostanu przed wizytą u specjalisty.
 

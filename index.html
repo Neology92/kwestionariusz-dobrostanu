@@ -4,9 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#F2F4F1">
 <meta name="description" content="Krótka samoocena dobrostanu (MHC-SF) z opcjonalnymi PHQ-9 i GAD-7. Nic nie jest zapisywane ani wysyłane.">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
-<title>Kontinuum dobrostanu</title>
+<title>Kwestionariusz dobrostanu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Literata:opsz,wght@7..72,500;7..72,600&display=swap">
@@ -29,15 +31,8 @@
   --display: "Literata", Georgia, "Times New Roman", serif;
   --body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #131816; --surface: #1B221F; --ink: #E4EBE7; --muted: #9AA8A1; --line: #2D3833;
-    --accent: #7FC4A8; --accent-ink: #0E1512; --accent-soft: #1E2F28;
-    --flourish: #7FC4A8; --moderate: #D8B65A; --languish: #E3907F;
-    --care-bg: #2A1D19; --care-line: #5B3B31;
-    color-scheme: dark;
-  }
-}
+/* Light by default regardless of system setting; dark only when explicitly set via data-theme="dark" */
+:root { color-scheme: light; }
 :root[data-theme="dark"] {
   --bg: #131816; --surface: #1B221F; --ink: #E4EBE7; --muted: #9AA8A1; --line: #2D3833;
   --accent: #7FC4A8; --accent-ink: #0E1512; --accent-soft: #1E2F28;
@@ -151,7 +146,8 @@ p { margin: 0; max-width: 62ch; }
   font: inherit;
   background: none;
   border: 0;
-  padding: 6px 0;
+  padding: 10px 0;
+  min-height: 44px;
   color: var(--accent);
   font-weight: 700;
   cursor: pointer;
@@ -311,9 +307,10 @@ details {
   background: var(--surface);
   border: 1.5px solid var(--line);
   border-radius: 14px;
-  padding: 14px 18px;
+  padding: 0 18px;
 }
-details summary { cursor: pointer; font-weight: 700; }
+details[open] { padding-bottom: 14px; }
+details summary { cursor: pointer; font-weight: 700; padding: 12px 0; min-height: 44px; }
 details ul { margin: 12px 0 2px; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
 details > p { margin-top: 10px; }
 .about { display: flex; flex-direction: column; gap: 10px; }
@@ -337,7 +334,7 @@ footer.foot { font-size: 14px; color: var(--muted); display: flex; flex-directio
 
 <div class="wrap">
   <header class="top">
-    <div class="brand">Kontinuum <span>dobrostanu</span></div>
+    <div class="brand">Kwestionariusz <span>dobrostanu</span></div>
     <button class="link quiet" id="homeBtn" data-act="home" hidden>Na początek</button>
   </header>
   <main id="app" aria-live="polite"></main>
