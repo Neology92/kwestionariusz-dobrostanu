@@ -159,7 +159,7 @@ p { margin: 0; max-width: 62ch; }
   text-underline-offset: 3px;
 }
 .link.quiet { color: var(--muted); font-weight: 400; }
-button:focus-visible, textarea:focus-visible, input:focus-visible + .opt-label, summary:focus-visible {
+button:focus-visible, textarea:focus-visible, summary:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
@@ -196,33 +196,6 @@ button:focus-visible, textarea:focus-visible, input:focus-visible + .opt-label, 
   padding: 2px 8px;
 }
 
-/* rule step */
-fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-legend { padding: 0; margin-bottom: 10px; font-weight: 700; }
-.opt { position: relative; }
-.opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.opt-label {
-  display: grid;
-  grid-template-columns: 22px 1fr;
-  gap: 12px;
-  align-items: start;
-  background: var(--surface);
-  border: 1.5px solid var(--line);
-  border-radius: 12px;
-  padding: 14px 16px;
-  cursor: pointer;
-}
-.opt-label .dot {
-  width: 22px; height: 22px; border-radius: 50%;
-  border: 2px solid var(--line);
-  margin-top: 1px;
-  display: grid; place-items: center;
-}
-.opt input:checked + .opt-label { border-color: var(--accent); background: var(--accent-soft); }
-.opt input:checked + .opt-label .dot { border-color: var(--accent); }
-.opt input:checked + .opt-label .dot::after {
-  content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--accent);
-}
 textarea {
   font: inherit;
   width: 100%;
@@ -234,7 +207,6 @@ textarea {
   padding: 12px 14px;
   resize: vertical;
 }
-.hint { color: var(--languish); font-size: 15px; font-weight: 700; }
 
 /* quiz */
 .progress-wrap { display: flex; flex-direction: column; gap: 8px; }
@@ -303,17 +275,16 @@ textarea {
 .bands > div.on { background: var(--ink); }
 .band-labels { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 
-.rule-box {
+.interp {
   border-left: 4px solid var(--accent);
   background: var(--accent-soft);
   border-radius: 0 12px 12px 0;
-  padding: 14px 16px;
+  padding: 16px 18px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
 }
-.rule-box .rule-text { font-family: var(--display); font-size: 18px; }
-.rule-box .rule-out { font-weight: 700; }
+.interp ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
 
 .subs { display: flex; flex-direction: column; gap: 14px; }
 .sub { display: flex; flex-direction: column; gap: 6px; }
@@ -439,20 +410,12 @@ const INSTR = {
   }
 };
 
-const RULES = {
-  a: "Jeśli wynik nie wyjdzie „rozkwit”, umawiam konsultację.",
-  b: "Umawiam konsultację niezależnie od wyniku."
-};
-
 const state = {
   view: "start",
-  rule: null,
-  ruleText: "",
   current: null,
   idx: 0,
   answers: { mhc: [], phq: [], gad: [] },
-  done: {},
-  ruleFlow: false
+  done: {}
 };
 
 const app = document.getElementById("app");
@@ -494,19 +457,70 @@ function bandFor(id, score) {
   return BANDS[id].bands.find(b => score >= b[0] && score <= b[1]);
 }
 
-function ruleOutcome(cat) {
-  if (state.rule === "a") return cat === "flourish"
-    ? "Według Twojej reguły nie musisz umawiać wizyty. Możesz, jeśli czujesz, że chcesz."
-    : "Według Twojej reguły: umawiasz konsultację.";
-  if (state.rule === "b") return "Według Twojej reguły: umawiasz konsultację.";
-  if (state.rule === "c") return "Przeczytaj swoją regułę jeszcze raz i zrób to, co w niej zapisałeś(-aś).";
-  return "";
+/* ---------- interpretation ---------- */
+const MHC_INTERP = {
+  languish: {
+    means: "Odczucia, o które pytał kwestionariusz, pojawiały się rzadko: co najmniej jedno z trzech pytań o samopoczucie i co najmniej sześć z jedenastu pytań o funkcjonowanie dostało odpowiedź „nigdy” albo „raz lub dwa razy”.",
+    todo: "Warto umówić konsultację u psychologa, psychoterapeuty albo psychiatry. Niski dobrostan wiąże się z większym ryzykiem depresji i gorszym funkcjonowaniem, także wtedy, gdy nie ma wyraźnych objawów choroby."
+  },
+  moderate: {
+    means: "Odpowiedzi nie spełniły kryteriów ani rozkwitu, ani marnienia. Część odczuć pojawiała się często, część rzadziej. W tej grupie jest najwięcej osób, ale ich stan bywa bardzo różny.",
+    todo: "Przyjrzyj się obszarowi, który wypadł najniżej. Jeśli od dłuższego czasu czujesz, że coś jest nie tak, albo PHQ-9 lub GAD-7 pokażą więcej objawów, rozmowa ze specjalistą ma sens."
+  },
+  flourish: {
+    means: "Co najmniej jedno z trzech pytań o samopoczucie i co najmniej sześć z jedenastu pytań o funkcjonowanie dostało odpowiedź „prawie codziennie” albo „codziennie”.",
+    todo: "Wynik nie wskazuje na potrzebę konsultacji. Dotyczy jednak tylko ostatniego miesiąca i nie obejmuje wszystkich trudności. Warto sprawdzić też PHQ-9 i GAD-7, bo dobre samopoczucie i objawy mogą występować jednocześnie."
+  }
+};
+const AREA_LOW = {
+  ewb: "Najniżej wypadł obszar emocjonalny: mniej było radości, zainteresowania życiem i zadowolenia z niego.",
+  swb: "Najniżej wypadł obszar społeczny: mniej było poczucia przynależności, wpływu i sensu w życiu wspólnoty. U wielu osób ten obszar jest najniższy, więc sam w sobie nie musi niepokoić.",
+  pwb: "Najniżej wypadł obszar psychologiczny: mniej było poczucia, że radzisz sobie na co dzień, rozwijasz się, masz bliskie relacje i kierunek w życiu."
+};
+const AREA_NAME = { ewb: "emocjonalny", swb: "społeczny", pwb: "psychologiczny" };
+const AREA_ITEMS = { ewb: 3, swb: 5, pwb: 6 };
+function typicalAnswer(v, items) { return FREQ6[Math.round(v / items)].toLowerCase(); }
+
+function mhcInterp(r) {
+  const I = MHC_INTERP[r.cat];
+  const areas = ["ewb", "swb", "pwb"];
+  const pct = k => r[k] / (AREA_ITEMS[k] * 5);
+  const sorted = areas.slice().sort((x, y) => pct(x) - pct(y));
+  const low = sorted[0], high = sorted[2];
+  const even = pct(high) - pct(low) < 0.1;
+  const areaLine = even
+    ? "Trzy obszary wypadły podobnie, żaden wyraźnie nie odstaje."
+    : `${AREA_LOW[low]} Najwyżej: ${AREA_NAME[high]}.`;
+  const freq = areas.map(k => `${AREA_NAME[k]}: ${typicalAnswer(r[k], AREA_ITEMS[k])}`).join(", ");
+  return `
+  <section>
+    <h2>Co oznacza ten wynik</h2>
+    <div class="interp">
+      <p>${I.means}</p>
+      <ul>
+        <li>${areaLine}</li>
+        <li>Typowa odpowiedź w obszarach: ${freq}.</li>
+      </ul>
+      <p><b>Co z tym zrobić.</b> ${I.todo}</p>
+    </div>
+  </section>`;
 }
-function ruleLine() {
-  if (state.rule === "a" || state.rule === "b") return RULES[state.rule];
-  if (state.rule === "c") return state.ruleText.trim();
-  return "";
-}
+
+const BAND_INTERP = {
+  phq: [
+    "Objawów obniżonego nastroju jest bardzo mało. Jeśli mimo to czujesz się źle, wynik MHC-SF może powiedzieć więcej.",
+    "Objawy są, ale łagodne. Warto obserwować, czy się utrzymują, i wypełnić kwestionariusz ponownie za kilka tygodni.",
+    "Objawy są na tyle nasilone, że zwykle zaleca się konsultację ze specjalistą.",
+    "Objawy są wyraźnie nasilone. Zaleca się konsultację ze specjalistą, najlepiej w najbliższym czasie.",
+    "Objawy są bardzo nasilone. Postaraj się umówić konsultację jak najszybciej."
+  ],
+  gad: [
+    "Objawów lęku jest bardzo mało.",
+    "Objawy lęku są, ale łagodne. Warto obserwować, czy się utrzymują.",
+    "Objawy lęku są na tyle nasilone, że zwykle zaleca się konsultację ze specjalistą.",
+    "Objawy lęku są bardzo nasilone. Postaraj się umówić konsultację jak najszybciej."
+  ]
+};
 
 /* ---------- views ---------- */
 function startView() {
@@ -517,11 +531,11 @@ function startView() {
     <h1 tabindex="-1">Jak się masz w ostatnim czasie?</h1>
     <p class="lede">Krótki kwestionariusz, który pomaga spojrzeć na swój stan z boku. Odpowiadasz tylko dla siebie.</p>
     <ol class="steps">
-      <li><div><b>Ustalasz regułę.</b> Decydujesz z góry, co zrobisz z wynikiem.</div></li>
       <li><div><b>Odpowiadasz na 14 pytań.</b> O ostatni miesiąc, około 3 minut.</div></li>
-      <li><div><b>Widzisz wynik.</b> Możesz go skopiować i pokazać na wizycie.</div></li>
+      <li><div><b>Widzisz wynik i jego interpretację.</b> Co oznacza i co możesz z nim zrobić.</div></li>
+      <li><div><b>Możesz go skopiować.</b> I pokazać na wizycie.</div></li>
     </ol>
-    <div class="btn-row"><button class="btn primary" data-act="go-rule">Zaczynam</button>${state.done.mhc ? `<button class="link" data-act="result" data-id="mhc">Zobacz swój wynik</button>` : ""}</div>
+    <div class="btn-row"><button class="btn primary" data-act="start" data-id="mhc">Zaczynam</button>${state.done.mhc ? `<button class="link" data-act="result" data-id="mhc">Zobacz swój wynik</button>` : ""}</div>
   </section>
   <hr class="divider">
   <section>
@@ -541,38 +555,6 @@ function instrCard(id) {
   </button>`;
 }
 
-function ruleView() {
-  const opt = (val, label) => `
-    <div class="opt">
-      <input type="radio" name="rule" id="rule-${val}" value="${val}" ${state.rule === val ? "checked" : ""}>
-      <label class="opt-label" for="rule-${val}"><span class="dot"></span><span>${label}</span></label>
-    </div>`;
-  return `
-  <section>
-    <p class="eyebrow">Krok 1 z 3</p>
-    <h1 tabindex="-1">Zanim zobaczysz wynik, zdecyduj, co z nim zrobisz</h1>
-    <p class="lede">Po wyniku łatwo pomyśleć „to jeszcze nic takiego”. Kiedy decyzja zapada wcześniej, ta myśl ma mniej do powiedzenia.</p>
-  </section>
-  <section>
-    <fieldset>
-      <legend>Moja reguła</legend>
-      ${opt("a", RULES.a)}
-      ${opt("b", RULES.b)}
-      ${opt("c", "Zapiszę własną regułę")}
-    </fieldset>
-    <div id="customWrap" ${state.rule === "c" ? "" : "hidden"}>
-      <label for="ruleText" class="small muted">Twoja reguła, np. „Jeśli wynik dobrostanu emocjonalnego będzie poniżej połowy, dzwonię w poniedziałek”</label>
-      <textarea id="ruleText" maxlength="400">${esc(state.ruleText)}</textarea>
-    </div>
-    <p class="small muted">Reguła pojawi się obok wyniku.</p>
-    <p class="hint" id="ruleHint" hidden>Wybierz jedną z opcji albo pomiń ten krok.</p>
-    <div class="btn-row">
-      <button class="btn primary" data-act="rule-next">Dalej</button>
-      <button class="link quiet" data-act="rule-skip">Pomiń ten krok</button>
-    </div>
-  </section>`;
-}
-
 function quizView() {
   const id = state.current, I = INSTR[id], n = I.items.length, i = state.idx;
   const sel = state.answers[id][i];
@@ -584,10 +566,9 @@ function quizView() {
   const intro = i === 0
     ? `<p class="small muted">Myśl o okresie: ${I.period}. Nie ma dobrych ani złych odpowiedzi. Zwykle najlepsza jest ta, która przychodzi do głowy jako pierwsza.</p>`
     : "";
-  const eyebrow = id === "mhc" && state.ruleFlow ? "Krok 2 z 3 · " : "";
   return `
   <section>
-    <p class="eyebrow">${eyebrow}${I.name} · ${I.code}</p>
+    <p class="eyebrow">${I.name} · ${I.code}</p>
     <div class="progress-wrap">
       <div class="progress" role="progressbar" aria-label="Postęp" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${i}"><span style="width:${pct}%"></span></div>
       <div class="progress-label"><span>Pytanie ${i + 1} z ${n}</span><span>${n - i - 1 === 0 ? "ostatnie" : "zostało " + (n - i - 1)}</span></div>
@@ -623,7 +604,6 @@ function mhcResult() {
   const c = CAT[r.cat];
   const track = ["languish", "moderate", "flourish"].map(k =>
     `<div class="${k}${k === r.cat ? " on" : ""}">${CAT[k].label}</div>`).join("");
-  const rl = ruleLine();
   const sub = (label, desc, v, max) => `
     <div class="sub">
       <div class="sub-head"><span><b>${label}</b> <span class="muted small">${desc}</span></span><span>${v} / ${max}</span></div>
@@ -631,19 +611,12 @@ function mhcResult() {
     </div>`;
   return `
   <section>
-    <p class="eyebrow">${state.ruleFlow ? "Krok 3 z 3 · " : ""}Wynik · MHC-SF</p>
+    <p class="eyebrow">Wynik · MHC-SF</p>
     <div class="verdict">
       <div class="track" aria-hidden="true">${track}</div>
       <h1 class="${r.cat}" tabindex="-1">${c.label}</h1>
       <p>${c.text}</p>
     </div>
-    ${rl ? `
-    <div class="rule-box">
-      <span class="eyebrow">Twoja reguła, ustalona przed wynikiem</span>
-      <span class="rule-text">${esc(rl)}</span>
-      <span class="rule-out">${ruleOutcome(r.cat)}</span>
-    </div>
-    <p class="small muted">Jeśli teraz pojawia się myśl, że to przesada albo że inni mają gorzej, to właśnie ta myśl, na którą reguła była przygotowana.</p>` : ""}
   </section>
   <section>
     <h2>Trzy obszary</h2>
@@ -654,6 +627,7 @@ function mhcResult() {
     </div>
     <p class="small muted">Wynik łączny: ${r.total} z 70. Kategoria nie wynika z sumy, tylko z tego, jak często pojawiały się poszczególne odczucia.</p>
   </section>
+  ${mhcInterp(r)}
   ${nextSteps("mhc")}`;
 }
 
@@ -682,6 +656,13 @@ function bandResult(id) {
       <p>${high
         ? "Wynik od 10 w górę to próg, przy którym zwykle zaleca się rozmowę ze specjalistą."
         : "Niski wynik nie znaczy, że wszystko gra. Mało objawów i mało dobrego samopoczucia mogą występować jednocześnie."}</p>
+    </div>
+  </section>
+  <section>
+    <h2>Co oznacza ten wynik</h2>
+    <div class="interp">
+      <p>${BAND_INTERP[id][B.bands.indexOf(band)]}</p>
+      <p class="small">Wynik to suma odpowiedzi (0–3 za pytanie) z ostatnich 2 tygodni. Pokazuje nasilenie objawów, nie stawia diagnozy. Diagnozę może postawić tylko specjalista po rozmowie.</p>
     </div>
   </section>
   ${nextSteps(id)}`;
@@ -726,8 +707,6 @@ function summaryText() {
     lines.push("Dobrostan (MHC-SF, ostatni miesiąc)");
     lines.push(`Kategoria: ${CAT[r.cat].label}`);
     lines.push(`Emocjonalny ${r.ewb}/15, społeczny ${r.swb}/25, psychologiczny ${r.pwb}/30, łącznie ${r.total}/70`);
-    const rl = ruleLine();
-    if (rl) lines.push(`Moja reguła ustalona przed wynikiem: ${rl}`);
     lines.push("");
   }
   ["phq", "gad"].forEach(id => {
@@ -770,7 +749,6 @@ function summaryView() {
 function render() {
   let html = "";
   if (state.view === "start") html = startView();
-  else if (state.view === "rule") html = ruleView();
   else if (state.view === "quiz") html = quizView();
   else if (state.view === "result") html = state.current === "mhc" ? mhcResult() : bandResult(state.current);
   else if (state.view === "summary") html = summaryView();
@@ -791,10 +769,10 @@ function go(view, extra) {
   render();
 }
 
-function startInstr(id, fromRule) {
+function startInstr(id) {
   state.answers[id] = [];
   delete state.done[id];
-  go("quiz", { current: id, idx: 0, ruleFlow: id === "mhc" ? !!fromRule : state.ruleFlow });
+  go("quiz", { current: id, idx: 0 });
 }
 
 function answer(val) {
@@ -815,36 +793,18 @@ document.addEventListener("click", e => {
   const act = el.dataset.act, id = el.dataset.id;
   switch (act) {
     case "home": go("start"); break;
-    case "go-rule": go("rule"); break;
-    case "rule-next": {
-      const picked = document.querySelector('input[name="rule"]:checked');
-      if (!picked) { document.getElementById("ruleHint").hidden = false; return; }
-      state.rule = picked.value;
-      if (state.rule === "c") {
-        state.ruleText = document.getElementById("ruleText").value;
-        if (!state.ruleText.trim()) {
-          const hint = document.getElementById("ruleHint");
-          hint.textContent = "Wpisz swoją regułę albo wybierz jedną z gotowych.";
-          hint.hidden = false;
-          return;
-        }
-      }
-      startInstr("mhc", true);
-      break;
-    }
-    case "rule-skip": state.rule = null; startInstr("mhc", false); break;
-    case "start": startInstr(id, false); break;
+    case "start": startInstr(id); break;
     case "result": go("result", { current: id }); break;
     case "answer": answer(+el.dataset.val); break;
     case "prev":
-      if (state.idx === 0) go(state.current === "mhc" && state.ruleFlow ? "rule" : "start");
+      if (state.idx === 0) go("start");
       else { state.idx--; render(); }
       break;
     case "next": state.idx++; render(); break;
     case "summary": go("summary"); break;
     case "reset":
       state.answers = { mhc: [], phq: [], gad: [] };
-      state.done = {}; state.rule = null; state.ruleText = ""; state.ruleFlow = false;
+      state.done = {};
       go("start");
       break;
     case "copy": {
@@ -861,17 +821,6 @@ document.addEventListener("click", e => {
   }
 });
 
-document.addEventListener("change", e => {
-  if (e.target.name === "rule") {
-    const wrap = document.getElementById("customWrap");
-    wrap.hidden = e.target.value !== "c";
-    document.getElementById("ruleHint").hidden = true;
-    if (e.target.value === "c") document.getElementById("ruleText").focus();
-  }
-});
-document.addEventListener("input", e => {
-  if (e.target.id === "ruleText") state.ruleText = e.target.value;
-});
 
 document.addEventListener("keydown", e => {
   if (state.view !== "quiz" || e.altKey || e.ctrlKey || e.metaKey) return;
