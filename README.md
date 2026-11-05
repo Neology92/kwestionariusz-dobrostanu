@@ -17,6 +17,6 @@ To narzędzia przesiewowe, nie diagnoza.
 
 MHC-SF jest użyty w oficjalnej polskiej adaptacji: Corey L. M. Keyes; polska adaptacja Dominika Karaś, Jan Cieciuch, Corey L. M. Keyes (2014), *Personality and Individual Differences*, 69, 104–109. Udostępniona na licencji Creative Commons Uznanie autorstwa (CC BY), www.liberilibri.pl. Treść polecenia, pytań i skali odpowiedzi jest zgodna z adaptacją; jedyna zmiana to „Wstaw znak »x« w okienku” zamienione na „Wybierz odpowiedź”.
 
-PHQ-9 i GAD-7 to robocze polskie tłumaczenia, nie oficjalne adaptacje.
+PHQ-9 i GAD-7 są użyte w oficjalnych polskich wersjach (opracowanie: Robert L. Spitzer, Janet B. W. Williams, Kurt Kroenke i współpracownicy, z wykorzystaniem grantu oświatowego od firmy Pfizer Inc.; zgoda na powielanie i rozprowadzanie nie jest wymagana). Brzmienie pytań i skali odpowiedzi jest zgodne z oryginałem. Polska walidacja PHQ-9: Kokoszka, Jastrzębski, Obrębski (2016), *Psychiatria*, 13(4), 187–193.
 
 Pomoc w kryzysie: 800 70 2222 (całą dobę), 116 123, 112.
