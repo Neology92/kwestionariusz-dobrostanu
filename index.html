@@ -315,6 +315,8 @@ details {
 }
 details summary { cursor: pointer; font-weight: 700; }
 details ul { margin: 12px 0 2px; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
+details > p { margin-top: 10px; }
+.about { display: flex; flex-direction: column; gap: 10px; }
 
 .summary-text {
   min-height: 220px;
@@ -542,6 +544,61 @@ function startView() {
     <h2>Albo zacznij od czegoś innego</h2>
     <p class="muted">Dwa krótkie kwestionariusze o objawach. Możesz je wypełnić teraz albo później, po pierwszym.</p>
     <div class="cards">${cards}</div>
+  </section>
+  <hr class="divider">
+  ${aboutView()}`;
+}
+
+function aboutView() {
+  return `
+  <section>
+    <h2>Co to za kwestionariusze</h2>
+    <p class="muted">Trzy krótkie, szeroko stosowane narzędzia przesiewowe. Każde mierzy coś innego, razem dają pełniejszy obraz.</p>
+    <div class="about">
+      <details>
+        <summary>Dlaczego dobrostan i objawy osobno</summary>
+        <p>Psycholog Corey Keyes pokazał, że zdrowie psychiczne to nie tylko brak choroby. Można nie mieć wyraźnych objawów depresji ani lęku, a mimo to żyć bez radości, zainteresowania i poczucia sensu. Można też mieć objawy i jednocześnie dobrze funkcjonować w wielu obszarach.</p>
+        <p>Dlatego te narzędzia patrzą z dwóch stron: MHC-SF mierzy, ile jest dobrego samopoczucia, a PHQ-9 i GAD-7, ile jest objawów, które mogą je obniżać.</p>
+      </details>
+      <details>
+        <summary>MHC-SF: dobrostan</summary>
+        <p>Mental Health Continuum – Short Form (C. Keyes). 14 pytań o to, jak często w ostatnim miesiącu było Ci dobrze i jak funkcjonowałeś(-aś). Ma polską adaptację naukową (Karaś, Cieciuch, Keyes, 2014).</p>
+        <ul>
+          <li><b>Obszar emocjonalny</b> (3 pytania): szczęście, zainteresowanie życiem, zadowolenie z niego.</li>
+          <li><b>Obszar społeczny</b> (5 pytań): poczucie przynależności, wkładu i sensu w życiu wspólnoty.</li>
+          <li><b>Obszar psychologiczny</b> (6 pytań): akceptacja siebie, radzenie sobie z codziennością, rozwój, bliskie relacje, niezależność, kierunek w życiu.</li>
+        </ul>
+        <p>Wynik to jedna z trzech kategorii. <b>Rozkwit</b>: co najmniej jedno z trzech odczuć emocjonalnych i sześć z pozostałych jedenastu pojawiało się prawie codziennie lub codziennie. <b>Marnienie</b>: analogicznie, ale nigdy albo raz, dwa razy w miesiącu. <b>Stan pośredni</b>: wszystko pomiędzy.</p>
+      </details>
+      <details>
+        <summary>PHQ-9: nastrój</summary>
+        <p>Patient Health Questionnaire-9 (Kroenke, Spitzer, Williams, 2001). 9 pytań odpowiadających kryteriom epizodu depresji, o ostatnie 2 tygodnie. Za każde pytanie 0–3 punkty, razem 0–27.</p>
+        <p>Przedziały: 0–4 minimalne, 5–9 łagodne, 10–14 umiarkowane, 15–19 umiarkowanie ciężkie, 20–27 ciężkie nasilenie objawów. Wynik od 10 w górę to próg, przy którym zwykle zaleca się konsultację. Ostatnie pytanie dotyczy myśli o śmierci lub zrobieniu sobie krzywdy: każda odpowiedź inna niż „wcale” to powód, żeby szybko z kimś porozmawiać.</p>
+      </details>
+      <details>
+        <summary>GAD-7: lęk</summary>
+        <p>Generalized Anxiety Disorder-7 (Spitzer, Kroenke, Williams, Löwe, 2006). 7 pytań o zamartwianie się, napięcie i niepokój w ostatnich 2 tygodniach. Za każde pytanie 0–3 punkty, razem 0–21.</p>
+        <p>Przedziały: 0–4 minimalne, 5–9 łagodne, 10–14 umiarkowane, 15–21 ciężkie nasilenie objawów. Choć powstał z myślą o lęku uogólnionym, dobrze wychwytuje też inne trudności lękowe, np. napady paniki czy lęk społeczny. Wynik od 10 w górę to próg, przy którym zwykle zaleca się konsultację.</p>
+      </details>
+      <details>
+        <summary>Jak mogą pomóc w ocenie własnego stanu</summary>
+        <ul>
+          <li><b>Dają punkt odniesienia.</b> Zamiast „chyba jest gorzej” masz konkretny wynik, który możesz porównać z progami i z własnym wynikiem za kilka tygodni.</li>
+          <li><b>Pomagają nazwać, co się dzieje.</b> Widać, czy chodzi bardziej o brak dobrego samopoczucia, o nastrój, o lęk, czy o kilka rzeczy naraz.</li>
+          <li><b>Ułatwiają decyzję o konsultacji.</b> Progi są oparte na badaniach, więc nie musisz zgadywać, czy „to już coś”.</li>
+          <li><b>Ułatwiają rozmowę na wizycie.</b> Specjaliści znają te narzędzia. Pokazanie wyniku to dobry początek rozmowy.</li>
+        </ul>
+      </details>
+      <details>
+        <summary>Czego te kwestionariusze nie robią</summary>
+        <ul>
+          <li>Nie stawiają diagnozy. Diagnozę może postawić tylko specjalista po rozmowie.</li>
+          <li>Opisują krótki okres: ostatni miesiąc albo 2 tygodnie. Wynik może się zmieniać.</li>
+          <li>Zależą od tego, jak odpowiadasz. Zmęczenie, chwilowy nastrój albo chęć wypadnięcia lepiej wpływają na wynik.</li>
+          <li>Pytania na tej stronie to robocze polskie tłumaczenia, nie oficjalne adaptacje, więc wyniki są orientacyjne.</li>
+        </ul>
+      </details>
+    </div>
   </section>`;
 }
 
