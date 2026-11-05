@@ -1,0 +1,6 @@
+# Nie commitujemy żadnych wyników ani eksportów
+wyniki*
+*results*
+*.csv
+*.json
+.DS_Store

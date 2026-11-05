@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="description" content="Krótka samoocena dobrostanu (MHC-SF) z opcjonalnymi PHQ-9 i GAD-7. Nic nie jest zapisywane ani wysyłane.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<title>Kontinuum dobrostanu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Literata:opsz,wght@7..72,500;7..72,600&display=swap">
+<style>
+/* Layout: one calm column, one question per screen; summary before detail on results */
+:root {
+  --bg: #F2F4F1;
+  --surface: #FFFFFF;
+  --ink: #1C2420;
+  --muted: #56625B;
+  --line: #D6DDD8;
+  --accent: #2E6A56;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E1EDE7;
+  --flourish: #2E6A56;
+  --moderate: #8C6D14;
+  --languish: #9A4636;
+  --care-bg: #FBF0EA;
+  --care-line: #E3C1B3;
+  --display: "Literata", Georgia, "Times New Roman", serif;
+  --body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131816; --surface: #1B221F; --ink: #E4EBE7; --muted: #9AA8A1; --line: #2D3833;
+    --accent: #7FC4A8; --accent-ink: #0E1512; --accent-soft: #1E2F28;
+    --flourish: #7FC4A8; --moderate: #D8B65A; --languish: #E3907F;
+    --care-bg: #2A1D19; --care-line: #5B3B31;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131816; --surface: #1B221F; --ink: #E4EBE7; --muted: #9AA8A1; --line: #2D3833;
+  --accent: #7FC4A8; --accent-ink: #0E1512; --accent-soft: #1E2F28;
+  --flourish: #7FC4A8; --moderate: #D8B65A; --languish: #E3907F;
+  --care-bg: #2A1D19; --care-line: #5B3B31;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.55;
+}
+.wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding-block: 20px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+header.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 40px;
+}
+.brand {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0.01em;
+}
+.brand span { color: var(--muted); font-weight: 500; }
+
+main { display: flex; flex-direction: column; gap: 28px; }
+section { display: flex; flex-direction: column; gap: 14px; }
+
+h1, h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0;
+  text-wrap: balance;
+}
+h1 { font-size: clamp(26px, 6vw, 34px); }
+h2 { font-size: 21px; }
+h1:focus, h2:focus { outline: none; }
+p { margin: 0; max-width: 62ch; }
+.lede { font-size: 18px; color: var(--muted); }
+.muted { color: var(--muted); }
+.small { font-size: 15px; }
+.eyebrow {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.steps {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  counter-reset: s;
+}
+.steps li {
+  counter-increment: s;
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+.steps li::before {
+  content: counter(s);
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+  display: grid; place-items: center;
+  font-weight: 700;
+  font-size: 15px;
+}
+.steps li > div { min-width: 0; padding-top: 3px; }
+
+.btn {
+  font: inherit;
+  font-weight: 700;
+  font-size: 17px;
+  border-radius: 12px;
+  padding: 14px 22px;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  text-align: center;
+}
+.btn.primary { background: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.06); }
+.btn.secondary { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn.secondary:hover { border-color: var(--accent); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.link {
+  font: inherit;
+  background: none;
+  border: 0;
+  padding: 6px 0;
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.link.quiet { color: var(--muted); font-weight: 400; }
+button:focus-visible, textarea:focus-visible, input:focus-visible + .opt-label, summary:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.divider { height: 1px; background: var(--line); border: 0; margin: 0; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.card {
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 18px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.card:hover { border-color: var(--accent); }
+.card-title { font-weight: 700; font-size: 17px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.card-meta { color: var(--muted); font-size: 14px; }
+.card-desc { font-size: 15px; }
+.chip {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+/* rule step */
+fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+legend { padding: 0; margin-bottom: 10px; font-weight: 700; }
+.opt { position: relative; }
+.opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.opt-label {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 12px;
+  align-items: start;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+}
+.opt-label .dot {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid var(--line);
+  margin-top: 1px;
+  display: grid; place-items: center;
+}
+.opt input:checked + .opt-label { border-color: var(--accent); background: var(--accent-soft); }
+.opt input:checked + .opt-label .dot { border-color: var(--accent); }
+.opt input:checked + .opt-label .dot::after {
+  content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--accent);
+}
+textarea {
+  font: inherit;
+  width: 100%;
+  min-height: 90px;
+  border-radius: 12px;
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 12px 14px;
+  resize: vertical;
+}
+.hint { color: var(--languish); font-size: 15px; font-weight: 700; }
+
+/* quiz */
+.progress-wrap { display: flex; flex-direction: column; gap: 8px; }
+.progress { height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.progress > span { display: block; height: 100%; background: var(--accent); border-radius: 999px; transition: width .25s ease; }
+.progress-label { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.stem { font-size: 16px; color: var(--muted); }
+.item { font-family: var(--display); font-weight: 500; font-size: clamp(22px, 5.2vw, 27px); line-height: 1.3; }
+.answers { display: flex; flex-direction: column; gap: 8px; }
+.ans {
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 13px 16px;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 10px;
+  align-items: center;
+}
+.ans:hover { border-color: var(--accent); }
+.ans .key {
+  font-size: 13px; color: var(--muted);
+  width: 26px; height: 26px; border-radius: 7px;
+  border: 1px solid var(--line);
+  display: grid; place-items: center;
+  font-variant-numeric: tabular-nums;
+}
+.ans[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.ans[aria-pressed="true"] .key { border-color: var(--accent); color: var(--accent); }
+.quiz-nav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+/* results */
+.verdict {
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.track { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.track > div {
+  border-radius: 8px;
+  padding: 8px 6px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  border: 1.5px solid var(--line);
+  color: var(--muted);
+  min-width: 0;
+}
+.track > div.on.languish { background: var(--languish); border-color: var(--languish); color: var(--surface); }
+.track > div.on.moderate { background: var(--moderate); border-color: var(--moderate); color: var(--surface); }
+.track > div.on.flourish { background: var(--flourish); border-color: var(--flourish); color: var(--surface); }
+.verdict h2.languish { color: var(--languish); }
+.verdict h2.moderate { color: var(--moderate); }
+.verdict h2.flourish { color: var(--flourish); }
+
+.bands { display: flex; gap: 3px; }
+.bands > div { height: 10px; border-radius: 4px; background: var(--line); }
+.bands > div.on { background: var(--ink); }
+.band-labels { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.rule-box {
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  border-radius: 0 12px 12px 0;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rule-box .rule-text { font-family: var(--display); font-size: 18px; }
+.rule-box .rule-out { font-weight: 700; }
+
+.subs { display: flex; flex-direction: column; gap: 14px; }
+.sub { display: flex; flex-direction: column; gap: 6px; }
+.sub-head { display: flex; justify-content: space-between; gap: 12px; font-variant-numeric: tabular-nums; }
+.sub-head b { font-weight: 700; }
+.bar { height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.bar > span { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+.score-big { font-family: var(--display); font-size: 40px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+.score-big small { font-size: 18px; color: var(--muted); font-weight: 500; }
+
+.care {
+  background: var(--care-bg);
+  border: 1.5px solid var(--care-line);
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.care ul, .lines { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.num { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; user-select: all; }
+
+details {
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 18px;
+}
+details summary { cursor: pointer; font-weight: 700; }
+details ul { margin: 12px 0 2px; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
+
+.summary-text {
+  min-height: 220px;
+  font-size: 15px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+.status { font-size: 15px; color: var(--accent); font-weight: 700; min-height: 1.4em; }
+
+footer.foot { font-size: 14px; color: var(--muted); display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); padding-top: 18px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .progress > span { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">Kontinuum <span>dobrostanu</span></div>
+    <button class="link quiet" id="homeBtn" data-act="home" hidden>Na początek</button>
+  </header>
+  <main id="app" aria-live="polite"></main>
+  <footer class="foot">
+    <p>To narzędzia przesiewowe, nie diagnoza. Pytania to robocze polskie tłumaczenia MHC-SF (C. Keyes), PHQ-9 i GAD-7, nie oficjalne adaptacje.</p>
+    <p>Nic nie jest zapisywane ani wysyłane. Po zamknięciu strony odpowiedzi znikają.</p>
+    <p>Potrzebujesz pomocy od razu? <span class="num">800 70 2222</span> (całą dobę, bezpłatnie) · <span class="num">116 123</span> · <span class="num">112</span></p>
+  </footer>
+</div>
+
+<script>
+const FREQ6 = ["Nigdy", "Raz lub dwa razy", "Mniej więcej raz w tygodniu", "2–3 razy w tygodniu", "Prawie codziennie", "Codziennie"];
+const FREQ4 = ["Wcale", "Przez kilka dni", "Przez ponad połowę dni", "Prawie codziennie"];
+
+const INSTR = {
+  mhc: {
+    name: "Dobrostan", code: "MHC-SF", period: "ostatni miesiąc",
+    meta: "14 pytań · ostatni miesiąc · ok. 3 min",
+    desc: "Jak często dobrze się czujesz i funkcjonujesz.",
+    stem: "Jak często w ostatnim miesiącu towarzyszyło Ci…",
+    options: FREQ6,
+    items: [
+      "Poczucie szczęścia",
+      "Zainteresowanie życiem",
+      "Zadowolenie z życia",
+      "Poczucie, że masz coś ważnego do wniesienia w życie społeczne",
+      "Poczucie przynależności do jakiejś wspólnoty, np. grupy znajomych albo sąsiedztwa",
+      "Poczucie, że społeczeństwo staje się lepszym miejscem dla ludzi takich jak Ty",
+      "Przekonanie, że ludzie są w gruncie rzeczy dobrzy",
+      "Poczucie, że sposób, w jaki działa społeczeństwo, ma dla Ciebie sens",
+      "Zadowolenie z większości cech Twojej osobowości",
+      "Poczucie, że dobrze radzisz sobie z codziennymi obowiązkami",
+      "Poczucie, że masz z innymi ciepłe relacje oparte na zaufaniu",
+      "Poczucie, że Twoje doświadczenia stawiają przed Tobą wyzwania, dzięki którym się rozwijasz",
+      "Pewność, że możesz myśleć po swojemu i wyrażać własne pomysły i opinie",
+      "Poczucie, że Twoje życie ma kierunek lub sens"
+    ]
+  },
+  phq: {
+    name: "Nastrój", code: "PHQ-9", period: "ostatnie 2 tygodnie",
+    meta: "9 pytań · ostatnie 2 tygodnie · ok. 2 min",
+    desc: "Objawy obniżonego nastroju.",
+    stem: "Jak często w ostatnich 2 tygodniach dokuczało Ci…",
+    options: FREQ4,
+    items: [
+      "Niewielkie zainteresowanie robieniem czegokolwiek albo mało przyjemności z tego",
+      "Smutek, przygnębienie lub poczucie beznadziei",
+      "Kłopoty z zasypianiem, przerywany sen albo zbyt długi sen",
+      "Zmęczenie lub brak energii",
+      "Słaby apetyt albo objadanie się",
+      "Złe zdanie o sobie: poczucie, że jesteś do niczego albo że zawodzisz siebie lub bliskich",
+      "Trudności ze skupieniem się, np. przy czytaniu albo oglądaniu filmu",
+      "Spowolnienie ruchów lub mowy, które mogli zauważyć inni, albo przeciwnie: niepokój, przez który trudno usiedzieć w miejscu",
+      "Myśli, że lepiej byłoby nie żyć, albo myśli o zrobieniu sobie krzywdy"
+    ]
+  },
+  gad: {
+    name: "Lęk i napięcie", code: "GAD-7", period: "ostatnie 2 tygodnie",
+    meta: "7 pytań · ostatnie 2 tygodnie · ok. 2 min",
+    desc: "Objawy lęku, zamartwiania się i napięcia.",
+    stem: "Jak często w ostatnich 2 tygodniach dokuczało Ci…",
+    options: FREQ4,
+    items: [
+      "Zdenerwowanie, niepokój lub poczucie, że jesteś na krawędzi",
+      "Niemożność powstrzymania albo opanowania zamartwiania się",
+      "Nadmierne zamartwianie się różnymi sprawami",
+      "Trudność z odprężeniem się",
+      "Taki niepokój, że trudno usiedzieć w miejscu",
+      "Łatwe wpadanie w irytację lub rozdrażnienie",
+      "Lęk, jakby miało się wydarzyć coś strasznego"
+    ]
+  }
+};
+
+const RULES = {
+  a: "Jeśli wynik nie wyjdzie „rozkwit”, umawiam konsultację.",
+  b: "Umawiam konsultację niezależnie od wyniku."
+};
+
+const state = {
+  view: "start",
+  rule: null,
+  ruleText: "",
+  current: null,
+  idx: 0,
+  answers: { mhc: [], phq: [], gad: [] },
+  done: {},
+  ruleFlow: false
+};
+
+const app = document.getElementById("app");
+const homeBtn = document.getElementById("homeBtn");
+let advanceTimer = null;
+
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+function sum(arr) { return arr.reduce((a, b) => a + (b || 0), 0); }
+function today() {
+  try { return new Date().toLocaleDateString("pl-PL", { day: "numeric", month: "long", year: "numeric" }); }
+  catch (e) { return new Date().toISOString().slice(0, 10); }
+}
+
+/* ---------- scoring ---------- */
+function scoreMHC(a) {
+  const ewb = sum(a.slice(0, 3)), swb = sum(a.slice(3, 8)), pwb = sum(a.slice(8, 14));
+  const hedHigh = a.slice(0, 3).filter(v => v >= 4).length;
+  const posHigh = a.slice(3).filter(v => v >= 4).length;
+  const hedLow = a.slice(0, 3).filter(v => v <= 1).length;
+  const posLow = a.slice(3).filter(v => v <= 1).length;
+  let cat = "moderate";
+  if (hedHigh >= 1 && posHigh >= 6) cat = "flourish";
+  else if (hedLow >= 1 && posLow >= 6) cat = "languish";
+  return { total: ewb + swb + pwb, ewb, swb, pwb, cat };
+}
+const CAT = {
+  languish: { label: "Marnienie", text: "Przez większość czasu było mało dobrego samopoczucia, zainteresowania i poczucia sensu. To stan, z którym warto pójść do specjalisty, nawet jeśli nie ma innych wyraźnych objawów." },
+  moderate: { label: "Stan pośredni", text: "Ani rozkwit, ani marnienie. To częsty wynik, ale nie oznacza, że wszystko jest w porządku. Część obszarów może potrzebować uwagi, a stan pośredni łatwiej przechodzi w gorszy niż rozkwit." },
+  flourish: { label: "Rozkwit", text: "Przez większość czasu czujesz się dobrze i dobrze funkcjonujesz. Jeśli mimo to coś Cię niepokoi, to też jest wystarczający powód, żeby z kimś porozmawiać." }
+};
+
+const BANDS = {
+  phq: { max: 27, bands: [[0, 4, "minimalne"], [5, 9, "łagodne"], [10, 14, "umiarkowane"], [15, 19, "umiarkowanie ciężkie"], [20, 27, "ciężkie"]], what: "Objawy obniżonego nastroju" },
+  gad: { max: 21, bands: [[0, 4, "minimalne"], [5, 9, "łagodne"], [10, 14, "umiarkowane"], [15, 21, "ciężkie"]], what: "Objawy lęku" }
+};
+function bandFor(id, score) {
+  return BANDS[id].bands.find(b => score >= b[0] && score <= b[1]);
+}
+
+function ruleOutcome(cat) {
+  if (state.rule === "a") return cat === "flourish"
+    ? "Według Twojej reguły nie musisz umawiać wizyty. Możesz, jeśli czujesz, że chcesz."
+    : "Według Twojej reguły: umawiasz konsultację.";
+  if (state.rule === "b") return "Według Twojej reguły: umawiasz konsultację.";
+  if (state.rule === "c") return "Przeczytaj swoją regułę jeszcze raz i zrób to, co w niej zapisałeś(-aś).";
+  return "";
+}
+function ruleLine() {
+  if (state.rule === "a" || state.rule === "b") return RULES[state.rule];
+  if (state.rule === "c") return state.ruleText.trim();
+  return "";
+}
+
+/* ---------- views ---------- */
+function startView() {
+  const cards = ["phq", "gad"].map(id => instrCard(id)).join("");
+  return `
+  <section>
+    <p class="eyebrow">Samoocena przed wizytą</p>
+    <h1 tabindex="-1">Jak się masz w ostatnim czasie?</h1>
+    <p class="lede">Krótki kwestionariusz, który pomaga spojrzeć na swój stan z boku. Odpowiadasz tylko dla siebie.</p>
+    <ol class="steps">
+      <li><div><b>Ustalasz regułę.</b> Decydujesz z góry, co zrobisz z wynikiem.</div></li>
+      <li><div><b>Odpowiadasz na 14 pytań.</b> O ostatni miesiąc, około 3 minut.</div></li>
+      <li><div><b>Widzisz wynik.</b> Możesz go skopiować i pokazać na wizycie.</div></li>
+    </ol>
+    <div class="btn-row"><button class="btn primary" data-act="go-rule">Zaczynam</button>${state.done.mhc ? `<button class="link" data-act="result" data-id="mhc">Zobacz swój wynik</button>` : ""}</div>
+  </section>
+  <hr class="divider">
+  <section>
+    <h2>Albo zacznij od czegoś innego</h2>
+    <p class="muted">Dwa krótkie kwestionariusze o objawach. Możesz je wypełnić teraz albo później, po pierwszym.</p>
+    <div class="cards">${cards}</div>
+  </section>`;
+}
+
+function instrCard(id) {
+  const I = INSTR[id];
+  const done = state.done[id];
+  return `<button class="card" data-act="${done ? "result" : "start"}" data-id="${id}">
+    <span class="card-title">${I.name}${done ? ` <span class="chip">Wypełniony</span>` : ""}</span>
+    <span class="card-desc">${I.desc}</span>
+    <span class="card-meta">${I.code} · ${I.meta}</span>
+  </button>`;
+}
+
+function ruleView() {
+  const opt = (val, label) => `
+    <div class="opt">
+      <input type="radio" name="rule" id="rule-${val}" value="${val}" ${state.rule === val ? "checked" : ""}>
+      <label class="opt-label" for="rule-${val}"><span class="dot"></span><span>${label}</span></label>
+    </div>`;
+  return `
+  <section>
+    <p class="eyebrow">Krok 1 z 3</p>
+    <h1 tabindex="-1">Zanim zobaczysz wynik, zdecyduj, co z nim zrobisz</h1>
+    <p class="lede">Po wyniku łatwo pomyśleć „to jeszcze nic takiego”. Kiedy decyzja zapada wcześniej, ta myśl ma mniej do powiedzenia.</p>
+  </section>
+  <section>
+    <fieldset>
+      <legend>Moja reguła</legend>
+      ${opt("a", RULES.a)}
+      ${opt("b", RULES.b)}
+      ${opt("c", "Zapiszę własną regułę")}
+    </fieldset>
+    <div id="customWrap" ${state.rule === "c" ? "" : "hidden"}>
+      <label for="ruleText" class="small muted">Twoja reguła, np. „Jeśli wynik dobrostanu emocjonalnego będzie poniżej połowy, dzwonię w poniedziałek”</label>
+      <textarea id="ruleText" maxlength="400">${esc(state.ruleText)}</textarea>
+    </div>
+    <p class="small muted">Reguła pojawi się obok wyniku.</p>
+    <p class="hint" id="ruleHint" hidden>Wybierz jedną z opcji albo pomiń ten krok.</p>
+    <div class="btn-row">
+      <button class="btn primary" data-act="rule-next">Dalej</button>
+      <button class="link quiet" data-act="rule-skip">Pomiń ten krok</button>
+    </div>
+  </section>`;
+}
+
+function quizView() {
+  const id = state.current, I = INSTR[id], n = I.items.length, i = state.idx;
+  const sel = state.answers[id][i];
+  const pct = Math.round((i / n) * 100);
+  const answers = I.options.map((o, k) => `
+    <button class="ans" data-act="answer" data-val="${k}" aria-pressed="${sel === k}">
+      <span class="key" aria-hidden="true">${k + 1}</span><span>${o}</span>
+    </button>`).join("");
+  const intro = i === 0
+    ? `<p class="small muted">Myśl o okresie: ${I.period}. Nie ma dobrych ani złych odpowiedzi. Zwykle najlepsza jest ta, która przychodzi do głowy jako pierwsza.</p>`
+    : "";
+  const eyebrow = id === "mhc" && state.ruleFlow ? "Krok 2 z 3 · " : "";
+  return `
+  <section>
+    <p class="eyebrow">${eyebrow}${I.name} · ${I.code}</p>
+    <div class="progress-wrap">
+      <div class="progress" role="progressbar" aria-label="Postęp" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${i}"><span style="width:${pct}%"></span></div>
+      <div class="progress-label"><span>Pytanie ${i + 1} z ${n}</span><span>${n - i - 1 === 0 ? "ostatnie" : "zostało " + (n - i - 1)}</span></div>
+    </div>
+    ${intro}
+  </section>
+  <section>
+    <p class="stem">${I.stem}</p>
+    <h1 class="item" tabindex="-1">${esc(I.items[i])}</h1>
+    <div class="answers" role="group" aria-label="Odpowiedzi">${answers}</div>
+  </section>
+  <div class="quiz-nav">
+    <button class="link quiet" data-act="prev">${i === 0 ? "Wróć" : "← Poprzednie pytanie"}</button>
+    ${sel !== undefined && i < n - 1 ? `<button class="link" data-act="next">Następne →</button>` : ""}
+  </div>`;
+}
+
+function careBox() {
+  return `
+  <div class="care" role="note">
+    <h2>Nie musisz czekać na umówioną wizytę</h2>
+    <p>Jeśli masz myśli o śmierci albo o zrobieniu sobie krzywdy, możesz porozmawiać z kimś jeszcze dziś:</p>
+    <ul>
+      <li><span class="num">800 70 2222</span> · Centrum Wsparcia dla Osób Dorosłych w Kryzysie Psychicznym, całą dobę, bezpłatnie</li>
+      <li><span class="num">116 123</span> · Kryzysowy Telefon Zaufania</li>
+      <li><span class="num">112</span> · gdy zagrożone jest życie</li>
+    </ul>
+  </div>`;
+}
+
+function mhcResult() {
+  const r = scoreMHC(state.answers.mhc);
+  const c = CAT[r.cat];
+  const track = ["languish", "moderate", "flourish"].map(k =>
+    `<div class="${k}${k === r.cat ? " on" : ""}">${CAT[k].label}</div>`).join("");
+  const rl = ruleLine();
+  const sub = (label, desc, v, max) => `
+    <div class="sub">
+      <div class="sub-head"><span><b>${label}</b> <span class="muted small">${desc}</span></span><span>${v} / ${max}</span></div>
+      <div class="bar"><span style="width:${Math.round(v / max * 100)}%"></span></div>
+    </div>`;
+  return `
+  <section>
+    <p class="eyebrow">${state.ruleFlow ? "Krok 3 z 3 · " : ""}Wynik · MHC-SF</p>
+    <div class="verdict">
+      <div class="track" aria-hidden="true">${track}</div>
+      <h1 class="${r.cat}" tabindex="-1">${c.label}</h1>
+      <p>${c.text}</p>
+    </div>
+    ${rl ? `
+    <div class="rule-box">
+      <span class="eyebrow">Twoja reguła, ustalona przed wynikiem</span>
+      <span class="rule-text">${esc(rl)}</span>
+      <span class="rule-out">${ruleOutcome(r.cat)}</span>
+    </div>
+    <p class="small muted">Jeśli teraz pojawia się myśl, że to przesada albo że inni mają gorzej, to właśnie ta myśl, na którą reguła była przygotowana.</p>` : ""}
+  </section>
+  <section>
+    <h2>Trzy obszary</h2>
+    <div class="subs">
+      ${sub("Emocjonalny", "jak się czujesz", r.ewb, 15)}
+      ${sub("Społeczny", "jak odnajdujesz się wśród ludzi", r.swb, 25)}
+      ${sub("Psychologiczny", "jak funkcjonujesz na co dzień", r.pwb, 30)}
+    </div>
+    <p class="small muted">Wynik łączny: ${r.total} z 70. Kategoria nie wynika z sumy, tylko z tego, jak często pojawiały się poszczególne odczucia.</p>
+  </section>
+  ${nextSteps("mhc")}`;
+}
+
+function bandResult(id) {
+  const I = INSTR[id], B = BANDS[id];
+  const a = state.answers[id];
+  const s = sum(a);
+  const band = bandFor(id, s);
+  const bands = B.bands.map(b => {
+    const w = (b[1] - b[0] + 1) / (B.max + 1) * 100;
+    return `<div style="width:${w}%" class="${b === band ? "on" : ""}" title="${b[0]}–${b[1]}: ${b[2]}"></div>`;
+  }).join("");
+  const crisis = id === "phq" && (a[8] || 0) > 0;
+  const high = s >= 10;
+  return `
+  ${crisis ? careBox() : ""}
+  <section>
+    <p class="eyebrow">Wynik · ${I.code}</p>
+    <div class="verdict">
+      <div><span class="score-big">${s}<small> / ${B.max}</small></span></div>
+      <h1 tabindex="-1">${B.what}: ${band[2]}</h1>
+      <div>
+        <div class="bands" aria-hidden="true">${bands}</div>
+        <div class="band-labels"><span>0</span><span>${B.max}</span></div>
+      </div>
+      <p>${high
+        ? "Wynik od 10 w górę to próg, przy którym zwykle zaleca się rozmowę ze specjalistą."
+        : "Niski wynik nie znaczy, że wszystko gra. Mało objawów i mało dobrego samopoczucia mogą występować jednocześnie."}</p>
+    </div>
+  </section>
+  ${nextSteps(id)}`;
+}
+
+function nextSteps(fromId) {
+  const remaining = ["mhc", "phq", "gad"].filter(id => id !== fromId && !state.done[id]);
+  const cardsHtml = remaining.map(id => instrCard(id)).join("");
+  const doneCount = Object.keys(state.done).length;
+  const optionalNote = fromId === "mhc"
+    ? "MHC-SF mierzy dobre samopoczucie. Te dwa krótkie kwestionariusze sprawdzają, co może je obniżać. Są opcjonalne."
+    : "Te kwestionariusze są opcjonalne. Wypełnij je, jeśli masz na to siłę.";
+  return `
+  <hr class="divider">
+  <section>
+    <h2>Co dalej</h2>
+    ${remaining.length ? `<p class="muted">${optionalNote}</p><div class="cards">${cardsHtml}</div>` : ""}
+    <div class="btn-row">
+      <button class="btn ${remaining.length ? "secondary" : "primary"}" data-act="summary">Zestawienie do pokazania na wizycie${doneCount > 1 ? ` (${doneCount})` : ""}</button>
+    </div>
+    ${visitInfo()}
+  </section>`;
+}
+
+function visitInfo() {
+  return `
+  <details>
+    <summary>Jak umówić pierwszą wizytę</summary>
+    <ul>
+      <li>Do psychiatry na NFZ nie potrzebujesz skierowania. To dobry pierwszy kontakt, jeśli nie wiesz, od czego zacząć.</li>
+      <li>W wielu miastach działają Centra Zdrowia Psychicznego. Ich punkt zgłoszeniowy przyjmuje bez skierowania i pomaga ustalić, jaka pomoc będzie pasować.</li>
+      <li>Prywatnie do psychologa lub psychoterapeuty zwykle zapiszesz się online, często na najbliższe dni.</li>
+      <li>Na wizycie możesz po prostu pokazać zestawienie z tej strony. Nie musisz przygotowywać przemowy.</li>
+    </ul>
+  </details>`;
+}
+
+function summaryText() {
+  const lines = [`Wyniki samooceny, ${today()}`, ""];
+  if (state.done.mhc) {
+    const r = scoreMHC(state.answers.mhc);
+    lines.push("Dobrostan (MHC-SF, ostatni miesiąc)");
+    lines.push(`Kategoria: ${CAT[r.cat].label}`);
+    lines.push(`Emocjonalny ${r.ewb}/15, społeczny ${r.swb}/25, psychologiczny ${r.pwb}/30, łącznie ${r.total}/70`);
+    const rl = ruleLine();
+    if (rl) lines.push(`Moja reguła ustalona przed wynikiem: ${rl}`);
+    lines.push("");
+  }
+  ["phq", "gad"].forEach(id => {
+    if (!state.done[id]) return;
+    const s = sum(state.answers[id]);
+    const b = bandFor(id, s);
+    lines.push(`${INSTR[id].name} (${INSTR[id].code}, ostatnie 2 tygodnie)`);
+    lines.push(`Wynik: ${s}/${BANDS[id].max}, nasilenie: ${b[2]}`);
+    lines.push("");
+  });
+  lines.push("Kwestionariusze przesiewowe, robocze polskie tłumaczenia.");
+  return lines.join("\n");
+}
+
+function summaryView() {
+  const remaining = ["mhc", "phq", "gad"].filter(id => !state.done[id]);
+  return `
+  <section>
+    <p class="eyebrow">Zestawienie</p>
+    <h1 tabindex="-1">Do pokazania na wizycie</h1>
+    <p class="muted">Skopiuj tekst i zapisz go w notatkach albo zrób zrzut ekranu. Strona niczego nie zapamiętuje.</p>
+    <textarea class="summary-text" id="sumText" readonly>${esc(summaryText())}</textarea>
+    <div class="btn-row">
+      <button class="btn primary" data-act="copy">Skopiuj tekst</button>
+      <span class="status" id="copyStatus" role="status"></span>
+    </div>
+  </section>
+  ${remaining.length ? `
+  <section>
+    <h2>Możesz jeszcze dodać</h2>
+    <div class="cards">${remaining.map(id => instrCard(id)).join("")}</div>
+  </section>` : ""}
+  <section>
+    ${visitInfo()}
+    <div class="btn-row"><button class="link quiet" data-act="reset">Wyczyść wszystko i zacznij od nowa</button></div>
+  </section>`;
+}
+
+/* ---------- render & actions ---------- */
+function render() {
+  let html = "";
+  if (state.view === "start") html = startView();
+  else if (state.view === "rule") html = ruleView();
+  else if (state.view === "quiz") html = quizView();
+  else if (state.view === "result") html = state.current === "mhc" ? mhcResult() : bandResult(state.current);
+  else if (state.view === "summary") html = summaryView();
+  app.innerHTML = html;
+  homeBtn.hidden = state.view === "start";
+  window.scrollTo(0, 0);
+  const h = app.querySelector("h1");
+  if (h) { try { h.focus({ preventScroll: true }); } catch (e) {} }
+  if (state.view === "summary") {
+    const t = document.getElementById("sumText");
+    if (t) t.style.height = (t.scrollHeight + 4) + "px";
+  }
+}
+
+function go(view, extra) {
+  clearTimeout(advanceTimer);
+  Object.assign(state, extra || {}, { view });
+  render();
+}
+
+function startInstr(id, fromRule) {
+  state.answers[id] = [];
+  delete state.done[id];
+  go("quiz", { current: id, idx: 0, ruleFlow: id === "mhc" ? !!fromRule : state.ruleFlow });
+}
+
+function answer(val) {
+  const id = state.current, I = INSTR[id];
+  state.answers[id][state.idx] = val;
+  app.querySelectorAll(".ans").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.val === val)));
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  clearTimeout(advanceTimer);
+  advanceTimer = setTimeout(() => {
+    if (state.idx < I.items.length - 1) { state.idx++; render(); }
+    else { state.done[id] = true; go("result"); }
+  }, reduce ? 60 : 220);
+}
+
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]");
+  if (!el) return;
+  const act = el.dataset.act, id = el.dataset.id;
+  switch (act) {
+    case "home": go("start"); break;
+    case "go-rule": go("rule"); break;
+    case "rule-next": {
+      const picked = document.querySelector('input[name="rule"]:checked');
+      if (!picked) { document.getElementById("ruleHint").hidden = false; return; }
+      state.rule = picked.value;
+      if (state.rule === "c") {
+        state.ruleText = document.getElementById("ruleText").value;
+        if (!state.ruleText.trim()) {
+          const hint = document.getElementById("ruleHint");
+          hint.textContent = "Wpisz swoją regułę albo wybierz jedną z gotowych.";
+          hint.hidden = false;
+          return;
+        }
+      }
+      startInstr("mhc", true);
+      break;
+    }
+    case "rule-skip": state.rule = null; startInstr("mhc", false); break;
+    case "start": startInstr(id, false); break;
+    case "result": go("result", { current: id }); break;
+    case "answer": answer(+el.dataset.val); break;
+    case "prev":
+      if (state.idx === 0) go(state.current === "mhc" && state.ruleFlow ? "rule" : "start");
+      else { state.idx--; render(); }
+      break;
+    case "next": state.idx++; render(); break;
+    case "summary": go("summary"); break;
+    case "reset":
+      state.answers = { mhc: [], phq: [], gad: [] };
+      state.done = {}; state.rule = null; state.ruleText = ""; state.ruleFlow = false;
+      go("start");
+      break;
+    case "copy": {
+      const t = document.getElementById("sumText");
+      const status = document.getElementById("copyStatus");
+      const fallback = () => { t.focus(); t.select(); status.textContent = "Tekst zaznaczony. Skopiuj go skrótem klawiszowym albo z menu."; };
+      try {
+        navigator.clipboard.writeText(t.value)
+          .then(() => { status.textContent = "Skopiowano."; })
+          .catch(fallback);
+      } catch (err) { fallback(); }
+      break;
+    }
+  }
+});
+
+document.addEventListener("change", e => {
+  if (e.target.name === "rule") {
+    const wrap = document.getElementById("customWrap");
+    wrap.hidden = e.target.value !== "c";
+    document.getElementById("ruleHint").hidden = true;
+    if (e.target.value === "c") document.getElementById("ruleText").focus();
+  }
+});
+document.addEventListener("input", e => {
+  if (e.target.id === "ruleText") state.ruleText = e.target.value;
+});
+
+document.addEventListener("keydown", e => {
+  if (state.view !== "quiz" || e.altKey || e.ctrlKey || e.metaKey) return;
+  if (e.target.tagName === "TEXTAREA" || e.target.tagName === "INPUT") return;
+  const n = parseInt(e.key, 10);
+  const opts = INSTR[state.current].options.length;
+  if (n >= 1 && n <= opts) { e.preventDefault(); answer(n - 1); }
+});
+
+render();
+</script>
+</body>
+</html>
